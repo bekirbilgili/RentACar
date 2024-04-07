@@ -3,15 +3,18 @@ package business;
 import core.Helper;
 import dao.BrandDao;
 import entity.Brand;
+import entity.Model;
 
 import java.util.ArrayList;
 
 public class BrandManager {
 
     private final BrandDao brandDao;
+    private final ModelManager modelManager;
 
     public BrandManager() {
         this.brandDao = new BrandDao();
+        this.modelManager =new ModelManager();
     }
 
     public ArrayList<Object[]> getForTable(int size) {
@@ -49,11 +52,13 @@ public class BrandManager {
         return this.brandDao.update(brand);
     }
 
-    public boolean delete (int id) {
-        if (this.getbyId(id)==null) {
-            Helper.showMsg(id+"ID kayıtlı marka bulunamadı");
+    public boolean delete(int id) {
+        if (this.getbyId(id) == null) {
+            Helper.showMsg(id + "ID kayıtlı marka bulunamadı");
         }
-
+        for (Model model : this.modelManager.getByListBrandId(id)) {
+            this.modelManager.delete(model.getId());
+        }
         return this.brandDao.delete(id);
     }
 }
